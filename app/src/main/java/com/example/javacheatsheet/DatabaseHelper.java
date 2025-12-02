@@ -63,7 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_CHAPTER +
                 " (title, short_description) VALUES (" +
                 "'Primitive Datentypen'," +
-                "'Grundlegende Zahlentypen, char und boolean.');");
+                "'Primitive Datentypen sind die grundlegendsten Datentypen, die keine Objekte sind. Sie werden aus Effizienzgründen direkt im Speicher abgelegt.');");
 
         db.execSQL("INSERT INTO " + TABLE_CHAPTER +
                 " (title, short_description) VALUES (" +
@@ -80,90 +80,122 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
                 "1, 'Variable'," +
-                "'String name = \"Hallo Dominic\"; ist eine änderbare Variable.');");
+                "'\"Hallo Dominic\" ist eine änderbare Variable.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
                 "1, 'Konstante'," +
-                "'final String name = \"Hello World\"; ist nicht änderbar (Konstante).');");
+                "'\"Hello World\" ist eine nicht änderbare Konstante.');");
 
         // --- Entries zu Kapitel 2: Strings (chapter_id = 2) ---
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "2, 'String-Literale'," +
+                "3, 'String-Literale'," +
                 "'String-Literale werden im String-Pool gespeichert und wiederverwendet.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "2, 'Neues String-Objekt'," +
+                "4, 'Neues String-Objekt'," +
                 "'new String(\"Hello\") erzeugt ein neues Objekt im Heap, auch wenn derselbe Text schon im Pool existiert.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "2, 'Immutable'," +
+                "5, 'Immutable'," +
                 "'Strings sind unveränderlich. Änderungen erzeugen neue Objekte; bei vielen Änderungen besser StringBuilder verwenden.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "2, 'Wichtige Methoden'," +
+                "6, 'Wichtige Methoden'," +
                 "'length(), charAt(), substring(), toUpperCase(), toLowerCase(), indexOf(), contains().');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "2, 'Textblöcke'," +
+                "7, 'Textblöcke'," +
                 "'Textblöcke (ab Java 15) sind mehrzeilige Strings mit drei doppelten Anführungszeichen, bei denen Zeilenumbrüche und Formatierung erhalten bleiben.');");
 
         // --- Entries zu Kapitel 3: Primitive Datentypen (chapter_id = 3) ---
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "3, 'byte'," +
+                "8, 'byte'," +
                 "'Kleine Ganzzahlen von -128 bis 127, gut für speichersparende Arrays.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "3, 'int'," +
+                "9, 'int'," +
                 "'Standard-Ganzzahltyp, ca. -2 Milliarden bis +2 Milliarden.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "3, 'double'," +
+                "10, 'double'," +
                 "'Gleitkommazahl mit ca. 15–16 Stellen Genauigkeit.');");
 
         // --- Entries zu Kapitel 4: Nicht-primitive Datentypen (chapter_id = 4) ---
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "4, 'String'," +
+                "11, 'String'," +
                 "'Objekt-Typ für Zeichenketten, unveränderlich (immutable).');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "4, 'Array'," +
+                "12, 'Array'," +
                 "'Feld fester Größe für Elemente eines Typs, z.B. int[] numbers = {1,2,3,4};');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "4, 'Klasse/Objekt'," +
+                "13, 'Klasse/Objekt'," +
                 "'Klasse = Bauplan, Objekt = konkrete Instanz, z.B. Car myCar = new Car();');");
 
         // --- Entries zu Kapitel 5: Numbers (chapter_id = 5) ---
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "5, 'Math-Methoden'," +
+                "14, 'Math-Methoden'," +
                 "'abs(), round(), floor(), ceil(), pow(), sqrt(), random().');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "5, 'Wrapper-Klassen'," +
+                "15, 'Wrapper-Klassen'," +
                 "'Integer, Double, Boolean – Wrapper machen primitive Typen zu Objekten, nützlich in Collections.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
                 " (chapter_id, title, description) VALUES (" +
-                "5, 'Konvertierungen'," +
+                "16, 'Konvertierungen'," +
                 "'parseInt(), parseDouble(), toString(), valueOf(), Umwandlung zwischen String und Zahl.');");
+
+        // --- Code-Beispiele zu Entry 1: Variable ---
+        db.execSQL("INSERT INTO " + TABLE_CODE +
+                " (entry_id, code, output) VALUES (" +
+                "1," +
+                "'String name = \"Hallo Dominic\";'," +
+                " 'Erstellt eine änderbare String-Variable mit dem Wert \"Hallo Dominic\".' );");
+
+        // --- Code-Beispiele zu Entry 1: Konstante ---
+        db.execSQL("INSERT INTO " + TABLE_CODE +
+                " (entry_id, code, output) VALUES (" +
+                "2, 'final String name = \"Hello World\";'," +
+                " 'Das Stichwort final erstellt eine Konstante. Der Wert kann nach der Zuweisung nicht mehr geändert werden.' );");
+
+        // --- Code-Beispiele zu Entry 8: byte ---
+        db.execSQL("INSERT INTO " + TABLE_CODE +
+                " (entry_id, code, output) VALUES (" +
+                "8, 'byte smallNumber = 100;'," +
+                " 'Kleine Ganzzahl im Bereich -128 bis 127, spart Speicher.' );");
+
+        // --- Code-Beispiele zu Entry 9: int ---
+        db.execSQL("INSERT INTO " + TABLE_CODE +
+                " (entry_id, code, output) VALUES (" +
+                "9, 'int age = 33;'," +
+                " 'Ganzzahlige Variable age mit dem Wert 33.' );");
+
+        // --- Code-Beispiele zu Entry 10: double ---
+        db.execSQL("INSERT INTO " + TABLE_CODE +
+                " (entry_id, code, output) VALUES (" +
+                "10, 'double pi = 3.141592653589793;'," +
+                " 'double mit hoher Genauigkeit, geeignet für Dezimalwerte.' );");
+
     }
 
     @Override

@@ -43,9 +43,9 @@ public class EntryDetailActivity extends AppCompatActivity {
         }
         cursor.close();
 
-        // 2. Erstes Codebeispiel laden (optional)
+        // 2. Code-Beispiele laden (code + output)
         Cursor codeCursor = db.rawQuery(
-                "SELECT code FROM " + DatabaseHelper.TABLE_CODE +
+                "SELECT code, output FROM " + DatabaseHelper.TABLE_CODE +
                         " WHERE entry_id = ?",
                 new String[]{String.valueOf(entryId)}
         );
@@ -54,9 +54,16 @@ public class EntryDetailActivity extends AppCompatActivity {
 
         while (codeCursor.moveToNext()) {
             String code = codeCursor.getString(0);
-            codeBuilder.append(code).append("\n\n");
+            String output = codeCursor.getString(1);
+
+            codeBuilder.append(code);
+            if (output != null && !output.isEmpty()) {
+                codeBuilder.append("\n\n// ").append(output);
+            }
+            codeBuilder.append("\n\n");
         }
         codeCursor.close();
+
 
         // 3. In Views anzeigen
         textTitle.setText(title);
