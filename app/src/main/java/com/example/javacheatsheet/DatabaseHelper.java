@@ -6,164 +6,163 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "mydatabase.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "javacheatsheet.db";
+    private static final int DATABASE_VERSION = 3; // Version erhöht, damit onUpgrade läuft
 
     public static final String TABLE_CHAPTER = "chapter";
     public static final String TABLE_ENTRY   = "entry";
     public static final String TABLE_CODE    = "code_example";
 
+    public static final String COL_ID = "_id";
+    public static final String COL_CHAPTER_ID = "chapter_id";
+    public static final String COL_ENTRY_ID = "entry_id";
+    public static final String COL_TITLE = "title";
+    public static final String COL_DESCRIPTION = "description";
+    public static final String COL_SHORT_DESC = "short_description";
+    public static final String COL_CODE = "code";
+    public static final String COL_OUTPUT = "output";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    public static final String CREATE_CHAPTER_TABLE =
+            "CREATE TABLE " + TABLE_CHAPTER + " (" +
+                    COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    COL_TITLE + " TEXT NOT NULL," +
+                    COL_SHORT_DESC + " TEXT" +
+                    ");";
+
+    private static final String CREATE_ENTRY_TABLE =
+            "CREATE TABLE " + TABLE_ENTRY + " (" +
+                    COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COL_CHAPTER_ID + " INTEGER NOT NULL, " +
+                    COL_TITLE + " TEXT NOT NULL, " +
+                    COL_DESCRIPTION + " TEXT, " +
+                    "FOREIGN KEY(" + COL_CHAPTER_ID + ") REFERENCES " +
+                    TABLE_CHAPTER + "(" + COL_ID + ")" +
+                    ");";
+
+    private static final String CREATE_CODE_TABLE =
+            "CREATE TABLE " + TABLE_CODE + " (" +
+                    COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COL_ENTRY_ID + " INTEGER NOT NULL, " +
+                    COL_CODE + " TEXT, " +
+                    COL_OUTPUT + " TEXT, " +
+                    "FOREIGN KEY(" + COL_ENTRY_ID + ") REFERENCES " +
+                    TABLE_ENTRY + "(" + COL_ID + ")" +
+                    ");";
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createChapterTable =
-                "CREATE TABLE " + TABLE_CHAPTER + " (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "title TEXT NOT NULL," +
-                        "short_description TEXT" +
-                        ");";
+        db.execSQL(CREATE_CHAPTER_TABLE);
+        db.execSQL(CREATE_ENTRY_TABLE);
+        db.execSQL(CREATE_CODE_TABLE);
 
-        String createEntryTable =
-                "CREATE TABLE " + TABLE_ENTRY + " (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "chapter_id INTEGER NOT NULL," +
-                        "title TEXT NOT NULL," +
-                        "description TEXT," +
-                        "FOREIGN KEY(chapter_id) REFERENCES " + TABLE_CHAPTER + "(id)" +
-                        ");";
-
-        String createCodeTable =
-                "CREATE TABLE " + TABLE_CODE + " (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "entry_id INTEGER NOT NULL," +
-                        "code TEXT," +
-                        "output TEXT," +
-                        "FOREIGN KEY(entry_id) REFERENCES " + TABLE_ENTRY + "(id)" +
-                        ");";
-
-        db.execSQL(createChapterTable);
-        db.execSQL(createEntryTable);
-        db.execSQL(createCodeTable);
-
-        // --- Kapitel (DEINE Texte in short_description anpassen) ---
-
+        // ==== CHAPTER ====
         db.execSQL("INSERT INTO " + TABLE_CHAPTER +
-                " (title, short_description) VALUES (" +
-                "'Variablen'," +
-                "'Grundlagen zu Variablen in Java.');");
+                " (" + COL_TITLE + ", " + COL_SHORT_DESC + ") VALUES " +
+                "('1.00 Primitive Datensätze und Objekte', 'Grundlagen: primitive Daten vs. Objekte.')," +
+                "('1.01 Numerische primitive Datensätze', 'Ganzzahlen, Gleitkommazahlen, Bitbreiten.')," +
+                "('1.02 Gleitkommazahl-Typen', 'float vs. double, Literale, Genauigkeit.')," +
+                "('1.03 Der primitive Datentyp char', '16-Bit-Zeichen, Unicode, Steuerzeichen.')," +
+                "('1.04 Zeichenliterale', 'Einzelne Zeichen, Escape-Sequenzen wie ''\\n''.')," +
+                "('1.05 Primitiver Datentyp boolean', 'Wahrheitswerte true/false.')," +
+                "('2.00 Variablen und Zuweisungsanweisungen', 'Speicher, Variablen als benannte Bereiche.')," +
+                "('2.01 Variablen', 'Vorstellung als Kästchen im Speicher.')," +
+                "('2.02 Deklaration einer Variable', 'Beispiel long payAmount = 123;')," +
+                "('2.03 Syntax der Variablendeklaration', 'Formen: Typ Name;, Typ Name = Wert; usw.');");
 
-        db.execSQL("INSERT INTO " + TABLE_CHAPTER +
-                " (title, short_description) VALUES (" +
-                "'Strings'," +
-                "'Arbeiten mit Zeichenketten in Java.');");
+        // ==== ENTRY ====
 
-        db.execSQL("INSERT INTO " + TABLE_CHAPTER +
-                " (title, short_description) VALUES (" +
-                "'Primitive Datentypen'," +
-                "'Grundlegende Zahlentypen, char und boolean.');");
+        // 1.00 - HTML-basiert für Fett + Listen
+        db.execSQL("INSERT INTO " + TABLE_ENTRY +
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "1, '1.00 Primitive Datensätze und Objekte', " +
+                "'" +
+                "<p>In Java fallen <b>alle Daten</b> in eine von zwei Kategorien: <b>primitive Daten</b> und <b>Objekte</b>.</p>" +
+                "<p>Es gibt nur <b>acht primitive Datentypen</b>.<br/>" +
+                "Java besitzt jedoch viele verschiedene <b>Objekt-Typen</b>, und du kannst so viele weitere <b>selbst definieren</b>, wie du brauchst.</p>" +
+                "<p>Jeder Datentyp, den du selbst erstellst, ist ein <b>Objekttyp</b>.<br/>" +
+                "Da Java eine <b>objektorientierte Programmiersprache</b> ist, wirst du später noch viel ausführlicher über Objekte lernen.</p>" +
+                "<p>Im Moment ist Folgendes wichtig:</p>" +
+                "<ul>" +
+                "<li>Ein <b>primitiver Datenwert</b> verwendet nur eine <b>kleine, feste Anzahl von Bytes</b>.</li>" +
+                "<li>Es gibt genau <b>acht primitive Datentypen</b>.</li>" +
+                "<li>Programmierer können keine neuen primitiven Datentypen erstellen.</li>" +
+                "<li>Ein <b>Objekt</b> ist ein <b>größerer Datenblock</b>, der viele Bytes Speicher nutzen kann.</li>" +
+                "<li>Ein Objekt besteht meist aus <b>mehreren internen Bestandteilen</b>.</li>" +
+                "<li>Der <b>Datentyp</b> eines Objekts wird seine <b>Klasse</b> genannt.</li>" +
+                "<li>Viele Klassen sind in Java bereits <b>vordefiniert</b>.</li>" +
+                "<li>Programmierer können <b>eigene Klassen definieren</b>, um spezielle Anforderungen eines Programms zu erfüllen.</li>" +
+                "</ul>" +
+                "'" +
+                ");");
 
-        db.execSQL("INSERT INTO " + TABLE_CHAPTER +
-                " (title, short_description) VALUES (" +
-                "'Nicht-primitive Datentypen'," +
-                "'Strings, Arrays, Klassen, Collections, Wrapper.');");
-
-        db.execSQL("INSERT INTO " + TABLE_CHAPTER +
-                " (title, short_description) VALUES (" +
-                "'Numbers'," +
-                "'Wrapper-Klassen, Math-Methoden und Konvertierungen.');");
-
-        // --- Entries zu Kapitel 1: Variablen (chapter_id = 1) ---
+        // 1.01 ff. – einfache Fließtexte, wie bisher
+        db.execSQL("INSERT INTO " + TABLE_ENTRY +
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "2, '1.01 Numerische primitive Datensätze', " +
+                "'Sechs der acht primitiven Datentypen sind numerisch. Integer-Typen (byte, short, int, long) " +
+                "haben keinen Nachkommateil, Gleitkomma-Typen (float, double) können Nachkommastellen darstellen. " +
+                "Jeder Typ hat feste Bitbreite und damit einen festen Wertebereich.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "1, 'Variable'," +
-                "'String name = \"Hallo Dominic\"; ist eine änderbare Variable.');");
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "3, '1.02 Gleitkommazahl-Typen', " +
+                "'float (32 Bit, einfache Genauigkeit) und double (64 Bit, doppelte Genauigkeit) speichern Gleitkommazahlen. " +
+                "Gleitkomma-Literale enthalten einen Dezimalpunkt und sind standardmäßig vom Typ double. In der Praxis " +
+                "solltest du fast immer double verwenden.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "1, 'Konstante'," +
-                "'final String name = \"Hello World\"; ist nicht änderbar (Konstante).');");
-
-        // --- Entries zu Kapitel 2: Strings (chapter_id = 2) ---
-
-        db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "2, 'String-Literale'," +
-                "'String-Literale werden im String-Pool gespeichert und wiederverwendet.');");
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "4, '1.03 Der primitive Datentyp char', " +
+                "'char repräsentiert ein einzelnes Zeichen und verwendet 16 Bit. Java nutzt Unicode, " +
+                "sodass praktisch alle Zeichen der Welt dargestellt werden können. Dasselbe Bitmuster kann je nach Datentyp " +
+                "als Zahl oder als Zeichen interpretiert werden.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "2, 'Neues String-Objekt'," +
-                "'new String(\"Hello\") erzeugt ein neues Objekt im Heap, auch wenn derselbe Text schon im Pool existiert.');");
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "5, '1.04 Zeichenliterale', " +
+                "'Ein Zeichenliteral ist ein einzelnes Zeichen in einfachen Anführungszeichen, z.B. ''m''. " +
+                "Steuerzeichen wie Zeilenumbruch und Tabulator werden als Escape-Sequenzen ''\\n'' und ''\\t'' geschrieben. " +
+                "Strings wie \"Hello\" sind keine char-Literale, sondern Objekte des Typs String.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "2, 'Immutable'," +
-                "'Strings sind unveränderlich. Änderungen erzeugen neue Objekte; bei vielen Änderungen besser StringBuilder verwenden.');");
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "6, '1.05 Primitiver Datentyp boolean', " +
+                "'boolean repräsentiert genau zwei Werte: true oder false. Der Name geht auf George Boole zurück. " +
+                "Logisch enthält ein boolean ein Bit Information, intern verwendet Java aber mehr als ein Bit.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "2, 'Wichtige Methoden'," +
-                "'length(), charAt(), substring(), toUpperCase(), toLowerCase(), indexOf(), contains().');");
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "7, '2.00 Variablen und Zuweisungsanweisungen', " +
+                "'Im Hauptspeicher werden Befehle und Daten beide als Bitmuster gespeichert. " +
+                "Eine Variable ist ein benannter Speicherbereich mit festem Datentyp, in dem ein Wert liegt.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "2, 'Textblöcke'," +
-                "'Textblöcke (ab Java 15) sind mehrzeilige Strings mit drei doppelten Anführungszeichen, bei denen Zeilenumbrüche und Formatierung erhalten bleiben.');");
-
-        // --- Entries zu Kapitel 3: Primitive Datentypen (chapter_id = 3) ---
-
-        db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "3, 'byte'," +
-                "'Kleine Ganzzahlen von -128 bis 127, gut für speichersparende Arrays.');");
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "8, '2.01 Variablen', " +
+                "'Stell dir eine Variable als kleines Kästchen aus Bytes vor, das einen Wert eines bestimmten Datentyps enthält. " +
+                "Variablen entstehen und verschwinden zur Laufzeit; der Speicher kann später für andere Zwecke genutzt werden.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "3, 'int'," +
-                "'Standard-Ganzzahltyp, ca. -2 Milliarden bis +2 Milliarden.');");
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "9, '2.02 Deklaration einer Variable', " +
+                "'Eine Deklaration wie long payAmount = 123; teilt dem Programm mit, dass es eine Variable dieses Typs braucht " +
+                "und ggf. mit einem Anfangswert belegt werden soll. Hardwaredetails übernimmt der Compiler.');");
 
         db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "3, 'double'," +
-                "'Gleitkommazahl mit ca. 15–16 Stellen Genauigkeit.');");
+                " (" + COL_CHAPTER_ID + ", " + COL_TITLE + ", " + COL_DESCRIPTION + ") VALUES (" +
+                "10, '2.03 Syntax der Variablendeklaration', " +
+                "'Formen: Datentyp Name; Datentyp Name = Wert; Datentyp v1, v2; Datentyp v1 = w1, v2 = w2; " +
+                "Für verschiedene Datentypen nutzt man separate Deklarationen.');");
 
-        // --- Entries zu Kapitel 4: Nicht-primitive Datentypen (chapter_id = 4) ---
-
-        db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "4, 'String'," +
-                "'Objekt-Typ für Zeichenketten, unveränderlich (immutable).');");
-
-        db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "4, 'Array'," +
-                "'Feld fester Größe für Elemente eines Typs, z.B. int[] numbers = {1,2,3,4};');");
-
-        db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "4, 'Klasse/Objekt'," +
-                "'Klasse = Bauplan, Objekt = konkrete Instanz, z.B. Car myCar = new Car();');");
-
-        // --- Entries zu Kapitel 5: Numbers (chapter_id = 5) ---
-
-        db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "5, 'Math-Methoden'," +
-                "'abs(), round(), floor(), ceil(), pow(), sqrt(), random().');");
-
-        db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "5, 'Wrapper-Klassen'," +
-                "'Integer, Double, Boolean – Wrapper machen primitive Typen zu Objekten, nützlich in Collections.');");
-
-        db.execSQL("INSERT INTO " + TABLE_ENTRY +
-                " (chapter_id, title, description) VALUES (" +
-                "5, 'Konvertierungen'," +
-                "'parseInt(), parseDouble(), toString(), valueOf(), Umwandlung zwischen String und Zahl.');");
+        // ==== CODE ====
+        db.execSQL("INSERT INTO " + TABLE_CODE +
+                " (" + COL_ENTRY_ID + ", " + COL_CODE + ", " + COL_OUTPUT + ") VALUES " +
+                "(9, 'public class Example {\\n    public static void main(String[] args) {\\n        long payAmount = 123;\\n        System.out.println(\"Die Variable enthält: \" + payAmount);\\n    }\\n}', " +
+                "'Deklaration und Initialisierung einer long-Variablen.' );");
     }
 
     @Override

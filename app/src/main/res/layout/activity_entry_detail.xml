@@ -1,28 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/textTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:paddingBottom="8dp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="16dp" />
+        <!-- Titel -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:paddingBottom="8dp" />
 
-    <TextView
-        android:id="@+id/textCode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:typeface="monospace" />
+        <!-- Beschreibung (Untertitel + Fließtext, als HTML formatiert) -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:paddingBottom="16dp" />
 
-</LinearLayout>
+        <!-- Code-Block (ohne schwarzen Balken) -->
+        <TextView
+            android:id="@+id/tvCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/black"
+            android:typeface="monospace"
+            android:textSize="13sp"
+            android:padding="8dp" />
+
+        <!-- Output -->
+        <TextView
+            android:id="@+id/tvOutput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="13sp"
+            android:paddingTop="4dp" />
+
+    </LinearLayout>
+</ScrollView>

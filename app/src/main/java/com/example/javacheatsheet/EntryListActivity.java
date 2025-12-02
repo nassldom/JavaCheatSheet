@@ -4,79 +4,92 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
-
 public class EntryListActivity extends AppCompatActivity {
 
-    public static final String EXTRA_CHAPTER_ID = "chapter_id";
+    public static final String EXTRA_CHAPTER_ID = "extra_chapter_id";
 
-    DatabaseHelper dbHelper;
+    private DatabaseHelper dbHelper;
+    private ListView listView;
+    private TextView tvChapterShortDesc;
+    private int currentChapterId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_list);
 
-        int chapterId = getIntent().getIntExtra(EXTRA_CHAPTER_ID, -1);
-
+        listView = findViewById(R.id.listEntries);
+        tvChapterShortDesc = findViewById(R.id.tvChapterShortDesc);
         dbHelper = new DatabaseHelper(this);
+
+        currentChapterId = getIntent().getIntExtra(EXTRA_CHAPTER_ID, -1);
+
+        if (currentChapterId != -1) {
+            loadChapterShortDesc(currentChapterId);
+            loadEntries(currentChapterId);
+        }
+    }
+
+    private void loadChapterShortDesc(int chapterId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // 1. Kapitel-Erklärung oben anzeigen
-        TextView textChapterDescription = findViewById(R.id.textChapterDescription);
-
-        Cursor chapterCursor = db.rawQuery(
-                "SELECT short_description FROM " + DatabaseHelper.TABLE_CHAPTER +
-                        " WHERE id = ?",
-                new String[]{String.valueOf(chapterId)}
+        Cursor c = db.query(
+                DatabaseHelper.TABLE_CHAPTER,
+                new String[]{ DatabaseHelper.COL_SHORT_DESC },
+                DatabaseHelper.COL_ID + "=?",
+                new String[]{ String.valueOf(chapterId) },
+                null, null, null
         );
 
-        if (chapterCursor.moveToFirst()) {
-            String desc = chapterCursor.getString(0);
-            textChapterDescription.setText(desc);
+        if (c.moveToFirst()) {
+            String shortDesc = c.getString(0);
+            tvChapterShortDesc.setText(shortDesc);
+        } else {
+            tvChapterShortDesc.setText("");
         }
-        chapterCursor.close();
 
-        // 2. Einträge für dieses Kapitel laden
-        ArrayList<Integer> entryIds = new ArrayList<>();
-        ArrayList<String> entryTitles = new ArrayList<>();
+        c.close();
+        db.close();
+    }
 
-        Cursor cursor = db.rawQuery(
-                "SELECT id, title FROM " + DatabaseHelper.TABLE_ENTRY +
-                        " WHERE chapter_id = ?",
-                new String[]{String.valueOf(chapterId)}
+    private void loadEntries(int chapterId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                DatabaseHelper.TABLE_ENTRY,
+                new String[] {
+                        DatabaseHelper.COL_ID,
+                        DatabaseHelper.COL_TITLE,
+                        DatabaseHelper.COL_DESCRIPTION
+                },
+                DatabaseHelper.COL_CHAPTER_ID + "=?",
+                new String[]{ String.valueOf(chapterId) },
+                null, null, null
         );
 
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String title = cursor.getString(1);
-            entryIds.add(id);
-            entryTitles.add(title);
-        }
-
-        cursor.close();
-
-        ListView listView = findViewById(R.id.listEntries);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                 this,
                 android.R.layout.simple_list_item_1,
-                entryTitles
+                cursor,
+                new String[]{ DatabaseHelper.COL_TITLE },
+                new int[]{ android.R.id.text1 },
+                0
         );
 
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener((parent, view, position, itemId) -> {
-            int entryId = entryIds.get(position);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            int entryId = (int) id;
 
             Intent intent = new Intent(EntryListActivity.this, EntryDetailActivity.class);
             intent.putExtra(EntryDetailActivity.EXTRA_ENTRY_ID, entryId);
+            intent.putExtra(EntryDetailActivity.EXTRA_CHAPTER_ID, currentChapterId);
             startActivity(intent);
         });
     }
