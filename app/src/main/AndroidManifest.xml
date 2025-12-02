@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JavaCheatSheet">
         <activity
+            android:name=".EntryDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EntryListActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
